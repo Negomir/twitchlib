@@ -1,5 +1,5 @@
 import httpx
-from twitch import Twitch
+from twitch.twitch import Twitch
 
 class Ads:
     def __init__(self, tt: Twitch):

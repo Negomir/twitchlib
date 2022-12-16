@@ -1,3 +1,5 @@
+from twitch.auth.token_store import TokenStore
+
 class UserAuth:
     def __init__(self, client_id: str, token_store: TokenStore):
         self.token_store = token_store

@@ -1,12 +1,12 @@
 import httpx
 from urllib import parse
-from twitch import Twitch
+from twitch.twitch import Twitch
 
 class Users:
     def __init__(self, tt: Twitch):
         self.tt = tt
 
-    def get_users(self, ids: list, logins: list, user_token: bool = False) -> dict:
+    def get_users(self, ids: list = [], logins: list = [], user_token: bool = False) -> dict:
         """
         Requires either an app or a user token.
         Returns information about one or more twitch users.
@@ -22,7 +22,7 @@ class Users:
             queries = queries + "login="+ login + "&"
 
         queries = queries[:-1]
-        qstr = parse.quote(queries)
+        qstr = parse.quote(queries, safe="=&")
 
         token = ""
         if user_token:

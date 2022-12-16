@@ -1,3 +1,10 @@
+class TokenStoreClient:
+    def load(self, id: str) -> str:
+        pass
+
+    def save(self, id: str, token: str, ttl: int = 0):
+        pass
+
 class TokenStore:
     def __init__(self, cl: TokenStoreClient):
         self.cl = cl
@@ -5,16 +12,8 @@ class TokenStore:
     def load(self, id: str) -> str:
         return self.cl.load(id)
 
-    def save(self, id: str, token: str):
-        return self.cl.save(id, token)
-
-class TokenStoreClient:
-    def load(self, id: str) -> str:
-        pass
-
-    def save(self, id: str, token: str):
-        pass
-
+    def save(self, id: str, token: str, ttl: int = 0):
+        return self.cl.save(id, token, ttl=ttl)
 class MemoryTokenClient:
     def __init__(self):
         self.tokens = {}
@@ -25,7 +24,7 @@ class MemoryTokenClient:
 
         return self.tokens[id]
 
-    def save(self, id: str, token: str):
+    def save(self, id: str, token: str, ttl: int = 0):
         if not self.tokens:
             self.tokens = {}
 
