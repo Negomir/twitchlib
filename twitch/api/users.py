@@ -14,15 +14,14 @@ class Users:
         - ids: list of user ids.
         - logins: list of user logins.
         """
-        queries = ""
-        for id in ids:
-            queries = queries + "id="+ id + "&"
+        queries = {}
+        if len(ids) > 0:
+            queries["id"] = ids
 
-        for login in logins:
-            queries = queries + "login="+ login + "&"
+        if len(logins) > 0:
+            queries["login"] = logins
 
-        queries = queries[:-1]
-        qstr = parse.quote(queries, safe="=&")
+        qstr = parse.urlencode(queries, doseq=True)
 
         token = ""
         if user_token:
