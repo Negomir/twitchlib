@@ -7,3 +7,6 @@ name = "twitchlib"
 version = "0.0.1"
 authors = [{ name = "Negomir99" , email = "miloss.ned99@gmail.com" }]
 description = "Lib for twitch requests"
+dependencies=[
+	"httpx"
+]
