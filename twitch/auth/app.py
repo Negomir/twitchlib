@@ -18,7 +18,7 @@ class AppAuth:
     def save_token(self, token: str, ttl: int = 0):
         self.token_store.save(id=self.client_id, token=token, ttl=ttl)
 
-    def __get_token(self):
+    def __get_token(self) -> str:
         body = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,

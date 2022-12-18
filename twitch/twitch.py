@@ -8,4 +8,4 @@ class Twitch:
         self.client_id = client_id
         self.client_secret = client_secret
         self.app_auth = AppAuth(client_id, client_secret, token_store)
-        self.user_auth = UserAuth(client_id, token_store)
+        self.user_auth = UserAuth(client_id, client_secret, token_store)

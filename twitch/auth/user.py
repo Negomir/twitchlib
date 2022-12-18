@@ -1,5 +1,7 @@
+import httpx
+from httpx._exceptions import HTTPStatusError
 from urllib import parse
-from twitch.auth.token_store import TokenStore
+from twitch.auth.token_store import TokenStore, TokenNotExists
 class AuthorizeInvalidCallbackURL(Exception):
     pass
 
@@ -10,19 +12,26 @@ class AuthorizeInvalidState(Exception):
     pass
 
 class UserAuth:
-    def __init__(self, client_id: str, token_store: TokenStore):
+    def __init__(self, client_id: str, client_secret: str, token_store: TokenStore):
         self.token_store = token_store
         self.client_id = client_id
+        self.client_secret = client_secret
 
-    def get_token(self):
+    def get_token(self) -> str:
         try:
-            self.token_store.load(id=self.client_id)
-        except KeyError:
-            ### Implement re-getting token
-            pass
+            return self.token_store.load(id=self.client_id)
+        except TokenNotExists:
+            raise
+        except:
+            ### refresh token
+            return None
 
-    def save_token(self, token: str):
-        self.token_store.save(id=self.client_id, token=token)
+    def get_refresh(self) -> str:
+        return self.token_store.get_refresh(id=self.client_id)
+
+    def save_tokens(self, token: str, refresh: str, ttl: int = 0):
+        self.token_store.save(id=self.client_id, token=token, ttl=ttl)
+        self.token_store.save_refresh(id=self.client_id, token=refresh)
 
     def generate_authorization_url(self, redirect_uri: str, scopes: list) -> str:
         params = {
@@ -61,3 +70,30 @@ class UserAuth:
             raise AuthorizeCallbackException("code_error", "code parameter is missing")
 
         return data["code"]
+
+    def __get_token(self, code: str, redirect_uri: str) -> str:
+        body = {
+            "client_id": self.client_id,
+            "client_secret": self.client_id,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri
+        }
+
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+
+        try:
+            res = httpx.post("https://id.twitch.tv/oauth2/token", headers=headers, data=body)
+            res.raise_for_status()
+
+            r = res.json()
+            token = r["access_token"]
+            expires = r["expires_in"]
+            refresh = r["refresh_token"]
+            self.save_tokens(token=token, refresh=refresh, ttl=expires)
+        except HTTPStatusError as ex:
+            print(ex)
+            print(res.content)
+            raise
