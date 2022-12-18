@@ -15,20 +15,24 @@ class TokenStoreClient:
         pass
 
 class TokenStore:
-    def __init__(self, cl: TokenStoreClient):
+    def __init__(self, cl: TokenStoreClient, key: str):
         self.cl = cl
+        self.key = key
 
     def load(self, id: str) -> str:
-        return self.cl.load(id)
+        return self.cl.load(self.__key(id))
 
     def save(self, id: str, token: str, ttl: int = 0):
-        return self.cl.save(id, token, ttl=ttl)
+        return self.cl.save(self.__key(id), token, ttl=ttl)
 
     def get_refresh(self, id: str) -> str:
-        return self.cl.get_refresh(id)
+        return self.cl.get_refresh(self.__key(id))
 
     def save_refresh(self, id: str, token: str):
-        return self.cl.save_refresh(id, token)
+        return self.cl.save_refresh(self.__key(id), token)
+
+    def __key(self, id: str) -> str:
+        return f'{self.key}:{id}'
 
 class MemoryTokenClient:
     def __init__(self):

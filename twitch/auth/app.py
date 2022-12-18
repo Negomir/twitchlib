@@ -1,6 +1,6 @@
 import httpx
 from httpx._exceptions import HTTPStatusError
-from twitch.auth.token_store import TokenStore
+from twitch.auth.token_store import TokenStore, TokenNotExists
 
 class AppAuth:
     def __init__(self, client_id: str, client_secret: str, token_store: TokenStore):
@@ -11,7 +11,7 @@ class AppAuth:
     def get_token(self):
         try:
             return self.token_store.load(id=self.client_id)
-        except KeyError:
+        except TokenNotExists:
             print("getting new token")
             return self.__get_token()
 
