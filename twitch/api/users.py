@@ -39,5 +39,7 @@ class Users:
             res.raise_for_status()
 
             return await res.json()
-        except:
-            raise
+        except Exception as ex:
+            print(ex)
+            print(res.content)
+            raise ex
