@@ -13,7 +13,13 @@ class AppAuth:
             return self.token_store.load(id=self.client_id)
         except TokenNotExists:
             print("getting new token")
-            return self.__get_token()
+            try:
+                token = self.__get_token()
+                return token
+            except Exception as ex:
+                print(token)
+                print(ex)
+                raise ex
 
     def save_token(self, token: str, ttl: int = 0):
         self.token_store.save(id=self.client_id, token=token, ttl=ttl)
