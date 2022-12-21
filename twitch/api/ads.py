@@ -5,7 +5,7 @@ class Ads:
     def __init__(self, tt: Twitch):
         self.tt = tt
 
-    def start_commercial(self, broadcaster_id: str, length: int) -> dict:
+    async def start_commercial(self, broadcaster_id: str, length: int) -> dict:
         """
         Requires the user access token with the channel:edit:commercial scope.
         Parameters:
@@ -29,6 +29,6 @@ class Ads:
             res = httpx.post("https://api.twitch.tv/helix/channels/commercial", headers=headers, json=body)
             res.raise_for_status()
 
-            return res.json()
+            return await res.json()
         except:
             raise
