@@ -37,6 +37,7 @@ class AppAuth:
             token = r["access_token"]
             expires = r["expires_in"]
             self.save_token(token=token, ttl=expires)
+            print(token)
             return token
         except HTTPStatusError as ex:
             print(ex)
