@@ -18,7 +18,7 @@ class AppAuth:
     def save_token(self, token: str, ttl: int = 0):
         self.token_store.save(id=self.client_id, token=token, ttl=ttl)
 
-    async def __get_token(self) -> str:
+    def __get_token(self) -> str:
         body = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
@@ -33,7 +33,7 @@ class AppAuth:
             res = httpx.post("https://id.twitch.tv/oauth2/token", headers=headers, data=body)
             res.raise_for_status()
 
-            r = await res.json()
+            r = res.json()
             token = r["access_token"]
             expires = r["expires_in"]
             self.save_token(token=token, ttl=expires)
@@ -42,6 +42,7 @@ class AppAuth:
         except HTTPStatusError as ex:
             print(ex)
             print(res.content)
-            raise
-        except:
-            raise
+            raise ex
+        except Exception as ex:
+            print(ex)
+            raise ex

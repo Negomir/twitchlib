@@ -71,7 +71,7 @@ class UserAuth:
 
         return data["code"]
 
-    async def __get_token(self, code: str, redirect_uri: str) -> str:
+    def __get_token(self, code: str, redirect_uri: str) -> str:
         body = {
             "client_id": self.client_id,
             "client_secret": self.client_id,
@@ -88,7 +88,7 @@ class UserAuth:
             res = httpx.post("https://id.twitch.tv/oauth2/token", headers=headers, data=body)
             res.raise_for_status()
 
-            r = await res.json()
+            r = res.json()
             token = r["access_token"]
             expires = r["expires_in"]
             refresh = r["refresh_token"]

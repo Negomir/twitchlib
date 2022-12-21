@@ -6,7 +6,7 @@ class Users:
     def __init__(self, tt: Twitch):
         self.tt = tt
 
-    async def get_users(self, ids: list = [], logins: list = [], user_token: bool = False) -> dict:
+    def get_users(self, ids: list = [], logins: list = [], user_token: bool = False) -> dict:
         """
         Requires either an app or a user token.
         Returns information about one or more twitch users.
@@ -38,7 +38,7 @@ class Users:
             res = httpx.get("https://api.twitch.tv/helix/users", params=qstr, headers=headers)
             res.raise_for_status()
 
-            return await res.json()
+            return res.json()
         except Exception as ex:
             print(ex)
             print(res.content)
