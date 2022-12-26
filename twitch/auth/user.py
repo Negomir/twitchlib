@@ -78,7 +78,7 @@ class UserAuth:
     def get_new_token(self, code: str) -> str:
         body = {
             "client_id": self.client_id,
-            "client_secret": self.client_id,
+            "client_secret": self.client_secret,
             "code": code,
             "grant_type": "authorization_code",
             "redirect_uri": self.redirect_uri
