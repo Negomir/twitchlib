@@ -35,6 +35,7 @@ class UserAuth:
 
     def generate_authorization_url(self, redirect_uri: str, scopes: list) -> str:
         params = {
+            "response_type": "code",
             "client_id": self.client_id,
             "redirect_uri": redirect_uri,
             "scope": "+".join(scopes),
