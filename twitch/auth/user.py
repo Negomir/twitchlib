@@ -1,7 +1,11 @@
+from typing import List
+
 import httpx
 from httpx._exceptions import HTTPStatusError
 from urllib import parse
+
 from twitch.auth.token_store import TokenStore, TokenNotExists
+
 class AuthorizeInvalidCallbackURL(Exception):
     pass
 
@@ -12,19 +16,17 @@ class AuthorizeInvalidState(Exception):
     pass
 
 class UserAuth:
-    def __init__(self, client_id: str, client_secret: str, token_store: TokenStore):
+    def __init__(self, client_id: str, client_secret: str, redirect_uri: str, token_store: TokenStore):
         self.token_store = token_store
         self.client_id = client_id
         self.client_secret = client_secret
+        self.redirect_uri = redirect_uri
 
     def get_token(self) -> str:
         try:
             return self.token_store.load(id=self.client_id)
-        except TokenNotExists:
-            raise
         except:
-            ### refresh token
-            return None
+            return self.refresh_token()
 
     def get_refresh(self) -> str:
         return self.token_store.get_refresh(id=self.client_id)
@@ -72,13 +74,13 @@ class UserAuth:
 
         return data["code"]
 
-    def __get_token(self, code: str, redirect_uri: str) -> str:
+    def get_new_token(self, code: str) -> str:
         body = {
             "client_id": self.client_id,
             "client_secret": self.client_id,
             "code": code,
             "grant_type": "authorization_code",
-            "redirect_uri": redirect_uri
+            "redirect_uri": self.redirect_uri
         }
 
         headers = {
@@ -95,6 +97,33 @@ class UserAuth:
             refresh = r["refresh_token"]
             self.save_tokens(token=token, refresh=refresh, ttl=expires)
         except HTTPStatusError as ex:
-            print(ex)
+            print(str(ex))
             print(res.content)
             raise
+
+    def refresh_token(self) -> str:
+        rt = self.get_refresh()
+        if not rt:
+            raise Exception("refresh_token", "refresh token not found")
+
+        body = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "grant_type": "refresh_token",
+            "refresh_token": rt
+        }
+
+        try:
+            res = httpx.post(url="https://id.twitch.tv/oauth2/token", data=body, headers={"content-type": "x-www-form-urlencoded"})
+            res.raise_for_status()
+
+            r = res.json()
+            token = r["access_token"]
+            expires = r["expires_in"]
+            refresh = r["refresh_token"]
+            self.save_tokens(token=token, refresh=refresh, ttl=expires)
+        except HTTPStatusError as ex:
+            print(res.content)
+            print(str(ex))
+            raise
+
