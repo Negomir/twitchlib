@@ -47,6 +47,7 @@ class UserAuth:
         return "https://id.twitch.tv/oauth2/authorize?" + parse.urlencode(params)
 
     def handle_callback_url(self, callback_url: str) -> str:
+        print(callback_url)
         try:
             query = callback_url.split("?")[1]
             kvs = query.split("&")
