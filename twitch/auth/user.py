@@ -31,7 +31,7 @@ class UserAuth:
     def get_refresh(self) -> str:
         return self.token_store.get_refresh(id=self.client_id)
 
-    def save_tokens(self, token: str, refresh: str, ttl: int = 0):
+    def save_tokens(self, token: str, refresh: str, ttl: int = -1):
         self.token_store.save(id=self.client_id, token=token, ttl=ttl)
         self.token_store.save_refresh(id=self.client_id, token=refresh)
 

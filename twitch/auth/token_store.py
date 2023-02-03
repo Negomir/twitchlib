@@ -5,13 +5,13 @@ class TokenStoreClient:
     def load(self, id: str) -> str:
         pass
 
-    def save(self, id: str, token: str, ttl: int = 0):
+    def save(self, id: str, token: str, ttl: int = -1):
         pass
 
     def get_refresh(self, id: str) -> str:
         pass
 
-    def save_refresh(self, id: str, token: str):
+    def save_refresh(self, id: str, token: str, ttl: int = -1):
         pass
 
 class TokenStore:
@@ -22,14 +22,14 @@ class TokenStore:
     def load(self, id: str) -> str:
         return self.cl.load(self.__key(id))
 
-    def save(self, id: str, token: str, ttl: int = 0):
+    def save(self, id: str, token: str, ttl: int = -1):
         return self.cl.save(self.__key(id), token, ttl=ttl)
 
     def get_refresh(self, id: str) -> str:
         return self.cl.get_refresh(self.__key(id))
 
-    def save_refresh(self, id: str, token: str):
-        return self.cl.save_refresh(self.__key(id), token)
+    def save_refresh(self, id: str, token: str, ttl: int = -1):
+        return self.cl.save_refresh(self.__key(id), token, ttl=ttl)
 
     def __key(self, id: str) -> str:
         return f'{self.key}:{id}'
@@ -45,7 +45,7 @@ class MemoryTokenClient:
 
         return self.tokens[id]
 
-    def save(self, id: str, token: str, ttl: int = 0):
+    def save(self, id: str, token: str, ttl: int = -1):
         if not self.tokens:
             self.tokens = {}
         self.tokens[id] = token
@@ -56,7 +56,7 @@ class MemoryTokenClient:
 
         return self.refresh[id]
 
-    def save_refresh(self, id: str, token: str):
+    def save_refresh(self, id: str, token: str, ttl: int = -1):
         if not self.refresh:
             self.refresh = {}
 
