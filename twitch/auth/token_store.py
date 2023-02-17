@@ -1,3 +1,5 @@
+from typing import Union
+
 class TokenNotExists(Exception):
     pass
 
@@ -5,13 +7,13 @@ class TokenStoreClient:
     def load(self, id: str) -> str:
         pass
 
-    def save(self, id: str, token: str, ttl: int = -1):
+    def save(self, id: str, token: str, ttl: Union[int, None] = None):
         pass
 
     def get_refresh(self, id: str) -> str:
         pass
 
-    def save_refresh(self, id: str, token: str, ttl: int = -1):
+    def save_refresh(self, id: str, token: str, ttl: Union[int, None] = None):
         pass
 
 class TokenStore:
@@ -22,13 +24,13 @@ class TokenStore:
     def load(self, id: str) -> str:
         return self.cl.load(self.__key(id))
 
-    def save(self, id: str, token: str, ttl: int = -1):
+    def save(self, id: str, token: str, ttl: Union[int, None] = None):
         return self.cl.save(self.__key(id), token, ttl=ttl)
 
     def get_refresh(self, id: str) -> str:
         return self.cl.get_refresh(self.__key(id))
 
-    def save_refresh(self, id: str, token: str, ttl: int = -1):
+    def save_refresh(self, id: str, token: str, ttl: Union[int, None] = None):
         return self.cl.save_refresh(self.__key(id), token, ttl=ttl)
 
     def __key(self, id: str) -> str:
@@ -45,7 +47,7 @@ class MemoryTokenClient:
 
         return self.tokens[id]
 
-    def save(self, id: str, token: str, ttl: int = -1):
+    def save(self, id: str, token: str, ttl: Union[int, None] = None):
         if not self.tokens:
             self.tokens = {}
         self.tokens[id] = token
@@ -56,7 +58,7 @@ class MemoryTokenClient:
 
         return self.refresh[id]
 
-    def save_refresh(self, id: str, token: str, ttl: int = -1):
+    def save_refresh(self, id: str, token: str, ttl: Union[int, None] = None):
         if not self.refresh:
             self.refresh = {}
 
