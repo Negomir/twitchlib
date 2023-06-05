@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "twitchlib"
-version = "0.0.1"
+version = "0.0.2"
 authors = [{ name = "Negomir99" , email = "miloss.ned99@gmail.com" }]
 description = "Lib for twitch requests"
 dependencies=[
